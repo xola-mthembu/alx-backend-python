@@ -1,8 +1,19 @@
 #!/usr/bin/env python3
+"""
+Module for safely_get_value function
+"""
 
-safely_get_value = __import__('101-safely_get_value').safely_get_value
-annotations = safely_get_value.__annotations__
+from typing import Mapping, Any, Union, TypeVar
 
-print("Here's what the mappings should look like")
-for k, v in annotations.items():
-    print(("{}: {}".format(k, v)))
+T = TypeVar('T')
+
+
+def safely_get_value(dct: Mapping, key: Any,
+                     default: Union[T, None] = None) -> Union[Any, T]:
+    """
+    Safely get a value from a dictionary
+    """
+    if key in dct:
+        return dct[key]
+    else:
+        return default
