@@ -3,8 +3,7 @@
 Module to define and annotate variables
 """
 
-# Define variables with comments indicating types
-a = 1  # type: int
-pi = 3.14  # type: float
-i_understand_annotations = True  # type: bool
-school = "Holberton"  # type: str
+a: int = 1
+pi: float = 3.14
+i_understand_annotations: bool = True
+school: str = "Holberton"
