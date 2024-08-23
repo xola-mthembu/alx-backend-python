@@ -1,26 +1,22 @@
 #!/usr/bin/env python3
-"""Test module for GithubOrgClient.public_repos"""
+"""Test module for GithubOrgClient.has_license"""
 import unittest
-from unittest.mock import patch
+from parameterized import parameterized
 from client import GithubOrgClient
 
 
 class TestGithubOrgClient(unittest.TestCase):
-    """Test case for GithubOrgClient.public_repos"""
+    """Test case for GithubOrgClient.has_license"""
 
-    @patch('client.get_json', return_value=[
-        {"name": "repo1", "license": {"key": "mit"}},
-        {"name": "repo2", "license": {"key": "apache-2.0"}},
+    @parameterized.expand([
+        ({"license": {"key": "my_license"}}, "my_license", True),
+        ({"license": {"key": "other_license"}}, "my_license", False),
     ])
-    @patch('client.GithubOrgClient._public_repos_url',
-           new_callable=patch.PropertyMock)
-    def test_public_repos(self, mock_repos_url, mock_get_json):
-        """Test public_repos returns expected repo names"""
-        mock_repos_url.return_value = "https://api.github.com/orgs/test/repos"
-        client = GithubOrgClient("test")
-        self.assertEqual(client.public_repos(), ["repo1", "repo2"])
-        mock_repos_url.assert_called_once()
-        mock_get_json.assert_called_once()
+    def test_has_license(self, repo, license_key, expected):
+        """Test that has_license returns correct boolean"""
+        self.assertEqual(
+            GithubOrgClient.has_license(repo, license_key), expected
+        )
 
 
 if __name__ == "__main__":
