@@ -1,34 +1,30 @@
 #!/usr/bin/env python3
-"""Test module for get_json function"""
+"""Test module for memoize decorator"""
 import unittest
-from unittest.mock import patch, Mock
-from utils import get_json
+from unittest.mock import patch
+from utils import memoize
 
 
-class TestGetJson(unittest.TestCase):
-    """Test case for get_json function"""
+class TestMemoize(unittest.TestCase):
+    """Test case for memoize decorator"""
 
-    @patch('utils.requests.get')
-    def test_get_json(self, mock_get):
-        """Test get_json returns correct payload"""
-        mock_get.return_value = Mock(
-            **{'json.return_value': {"payload": True}}
-        )
-        self.assertEqual(
-            get_json("http://example.com"), {"payload": True}
-        )
-        mock_get.assert_called_once_with("http://example.com")
+    class TestClass:
+        """Test class for memoize decorator"""
 
-        # Reset mock for the next test case
-        mock_get.reset_mock()
+        def a_method(self):
+            return 42
 
-        mock_get.return_value = Mock(
-            **{'json.return_value': {"payload": False}}
-        )
-        self.assertEqual(
-            get_json("http://holberton.io"), {"payload": False}
-        )
-        mock_get.assert_called_once_with("http://holberton.io")
+        @memoize
+        def a_property(self):
+            return self.a_method()
+
+    @patch.object(TestClass, 'a_method', return_value=42)
+    def test_memoize(self, mock_method):
+        """Test memoize ensures a_method is called once"""
+        test_obj = self.TestClass()
+        self.assertEqual(test_obj.a_property, 42)
+        self.assertEqual(test_obj.a_property, 42)
+        mock_method.assert_called_once()
 
 
 if __name__ == "__main__":
