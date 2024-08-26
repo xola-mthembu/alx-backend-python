@@ -5,7 +5,9 @@ Module for unit tests for utils.py.
 
 import unittest
 from parameterized import parameterized
-from utils import access_nested_map, get_json, memoize  # Import necessary functions and decorators
+from utils import (
+    access_nested_map, get_json, memoize
+)  # Shortened import line to meet 79 characters limit
 from unittest.mock import patch
 
 
@@ -73,19 +75,31 @@ class TestMemoize(unittest.TestCase):
         """
 
         class TestClass:
+            """
+            Test class to demonstrate memoize decorator.
+            """
+
             def a_method(self):
+                """
+                Returns 42.
+                """
                 return 42
 
             @memoize
             def a_property(self):
+                """
+                Memoized method that returns the result of a_method.
+                """
                 return self.a_method()
 
         with patch.object(
-            TestClass,
-            'a_method',
-            return_value=42
+            TestClass, 'a_method', return_value=42
         ) as mock_method:
             instance = TestClass()
-            self.assertEqual(instance.a_property, 42)
-            self.assertEqual(instance.a_property, 42)
+            self.assertEqual(
+                instance.a_property, 42
+            )  # First call, should call a_method
+            self.assertEqual(
+                instance.a_property, 42
+            )  # Second call, should use memoized result
             mock_method.assert_called_once()
