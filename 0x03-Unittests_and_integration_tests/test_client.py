@@ -48,19 +48,27 @@ class TestGithubOrgClient(unittest.TestCase):
            new_callable=PropertyMock)
     def test_public_repos(self, mock_public_repos_url, mock_get_json):
         """
-        Test public_repos method.
+        Test public_repos method to ensure correct behavior.
         """
+        # Mock _public_repos_url to return a specific URL
         mock_public_repos_url.return_value = "http://repos_url.com"
-        mock_get_json.return_value = [{"name": "repo1"}, {"name": "repo2"}]
+
+        # Mock get_json to return a fake payload
+        mock_get_json.return_value = [
+            {"name": "repo1"}, {"name": "repo2"}
+        ]
+
         client = GithubOrgClient("org_name")
         self.assertEqual(
             client.public_repos(),
             ["repo1", "repo2"]
         )
+
+        # Ensure the _public_repos_url property was called once
         mock_public_repos_url.assert_called_once()
-        mock_get_json.assert_called_once_with(
-            "http://repos_url.com"
-        )
+
+        # Ensure the get_json function was called once with the mocked URL
+        mock_get_json.assert_called_once_with("http://repos_url.com")
 
     @parameterized.expand([
         ({"license": {"key": "my_license"}}, "my_license", True),
